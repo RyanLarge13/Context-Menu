@@ -1,0 +1,12 @@
+{
+  "name": "context-menu",
+  "version": "1.0.0",
+  "description": "Easy Context Menu component to pull into your React apps and use quickly",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
