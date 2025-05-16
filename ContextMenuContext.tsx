@@ -16,25 +16,97 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useCallback, useContext, useState } from "react";
 
 interface ContextMenuContextType {}
 
+type OptionType = {};
+
+type ContextMenuDataType = {
+  title: string;
+  mainOptions: OptionType[];
+  options: OptionType[];
+  color: string;
+};
+
 export const ContextMenuContext = createContext({} as ContextMenuContextType);
 
-export const ConfigProvider = ({
+export const ContextMenuProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }): JSX.Element => {
-  const [show, setShow] = useState(false);
-  const [options, setOptions] = useState([]);
-  const [color, setColor] = useState("#000");
-  const [title, setTitle] = useState("");
+  const [CtxtShow, setCtxtShow] = useState(false);
+  const [CtxtMainOptions, setCtxtMainOptions] = useState([]);
+  const [CtxtOptions, setCtxtOptions] = useState([]);
+  const [CtxtColor, setCtxtColor] = useState("#000");
+  const [CtxtTitle, setCtxtTitle] = useState("");
 
-  const build = ({}) => {};
+  const build = (contextMenuData: ContextMenuDataType) => {
+    const { title, color, mainOptions, options } = contextMenuData;
 
-  const contextValue = { build: build };
+    if (options.length < 1) {
+      throw new Error(
+        `You must add at least one option to Context Menu build method. You provided ${options.length}`
+      );
+    }
+
+    if (mainOptions.length > 4) {
+      throw new Error(
+        "You can only add up to 4 mainOptions to your context menu. In ContextMenu.build method"
+      );
+    }
+
+    setCtxtTitle(title);
+    setCtxtColor(color);
+    setCtxtMainOptions(mainOptions);
+    setCtxtOptions(options);
+  };
+
+  const setTitle = (title: string) => {
+    if (!title) {
+      throw new Error("Must provide a title to ContextMenu.setTitle");
+    }
+    setCtxtTitle(title);
+  };
+
+  const setOptions = () => {};
+
+  const setMainOptions = () => {};
+
+  const setColor = () => {};
+
+  const getValue = useCallback(
+    (value: string) => {
+      if (!value) {
+        return null;
+      }
+
+      const values = {
+        title: CtxtTitle,
+        color: CtxtColor,
+        options: CtxtOptions,
+        mainOptions: CtxtMainOptions,
+      };
+
+      if (!values[value]) {
+        return null;
+      }
+
+      return values[value];
+    },
+    [CtxtTitle, Ctxt]
+  );
+
+  const contextValue = {
+    build: build,
+    setTitle,
+    CtxtShow,
+    CtxtMainOptions,
+    CtxtOptions,
+    CtxtColor,
+    CtxtTitle,
+  };
 
   return (
     <ContextMenuContext.Provider value={contextValue}>
@@ -43,10 +115,10 @@ export const ConfigProvider = ({
   );
 };
 
-export const useConfig = () => {
+export const useContextMenu = () => {
   const context = useContext(ContextMenuContext);
   if (!context) {
-    throw new Error("useConfig must be within a ConfigProvider");
+    throw new Error("useContextMenu must be within a ContextMenuProvider");
   }
 
   return context;
